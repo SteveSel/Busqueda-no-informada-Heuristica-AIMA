@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="Desastres">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/Desastres/Desastres.jar!/" />
+      <root url="jar://$PROJECT_DIR$/Desastres/javadoc.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

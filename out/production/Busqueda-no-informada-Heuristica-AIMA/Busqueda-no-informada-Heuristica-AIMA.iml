@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$" isTestSource="false" />
+      <excludeFolder url="file://$MODULE_DIR$/Demos" />
+      <excludeFolder url="file://$MODULE_DIR$/IA/Centrals" />
+      <excludeFolder url="file://$MODULE_DIR$/IA/Connectat" />
+      <excludeFolder url="file://$MODULE_DIR$/IA/Electrica" />
+      <excludeFolder url="file://$MODULE_DIR$/IA/Electricidad" />
+      <excludeFolder url="file://$MODULE_DIR$/IA/Marenostrum" />
+      <excludeFolder url="file://$MODULE_DIR$/IA/PathFinderDemo" />
+      <excludeFolder url="file://$MODULE_DIR$/IA/TSP2" />
+      <excludeFolder url="file://$MODULE_DIR$/IA/mySwing" />
+      <excludeFolder url="file://$MODULE_DIR$/IA/probAntenas" />
+      <excludeFolder url="file://$MODULE_DIR$/IA/probIA15" />
+      <excludeFolder url="file://$MODULE_DIR$/IA/probPathFinder" />
+      <excludeFolder url="file://$MODULE_DIR$/IA/probTSP" />
+      <excludeFolder url="file://$MODULE_DIR$/aima/search/demos" />
+      <excludeFolder url="file://$MODULE_DIR$/aima/search/eightpuzzle" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="Desastres (2)" level="project" />
+  </component>
+</module>
