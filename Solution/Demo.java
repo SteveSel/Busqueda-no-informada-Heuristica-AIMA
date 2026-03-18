@@ -1,94 +1,145 @@
 package Solution;
 
+import aima.search.framework.HeuristicFunction;
 import aima.search.framework.Problem;
 import aima.search.framework.Search;
 import aima.search.framework.SearchAgent;
+import aima.search.framework.SuccessorFunction;
 import aima.search.informed.HillClimbingSearch;
+import aima.search.informed.SimulatedAnnealingSearch;
 
 import IA.Desastres.Centros;
 import IA.Desastres.Grupos;
 
 import java.util.Iterator;
 import java.util.Properties;
+import java.util.Scanner;
 
 public class Demo {
 
     public static void main(String[] args) {
-        int numCentros = 5;
-        int numHelicopterosPorCentro = 1;
-        int semillaCentros = 1234;
-        int numGrupos = 100;
-        int semillaGrupos = 1234;
+        Scanner scanner = new Scanner(System.in);
 
-        State.todosLosCentros = new Centros(numCentros, numHelicopterosPorCentro, semillaCentros);
-        State.todosLosGrupos = new Grupos(numGrupos, semillaGrupos);
+        System.out.print("Algoritmo a usar (HC / SA): ");
+        String algoritmo = scanner.next().toUpperCase();
+
+        System.out.print("Semilla (para centros y grupos): ");
+        int semilla = scanner.nextInt();
+
+        System.out.print("Numero de centros: ");
+        int numCentros = scanner.nextInt();
+
+        System.out.print("Numero de helicopteros por centro: ");
+        int numHelicopterosPorCentro = scanner.nextInt();
+
+        System.out.print("Numero de grupos a rescatar: ");
+        int numGrupos = scanner.nextInt();
+
+        System.out.print("Heuristica a usar (1 / 2): ");
+        int opcionHeuristica = scanner.nextInt();
+
+        System.out.print("Operador a usar (1: Mover, 2: Swap, 3: Invertir): ");
+        int opcionOperador = scanner.nextInt();
+
+        System.out.print("Generador inicial (1 / 2 / 3): ");
+        int opcionGenerador = scanner.nextInt();
+
+        scanner.close();
+
+        State.todosLosCentros = new Centros(numCentros, numHelicopterosPorCentro, semilla);
+        State.todosLosGrupos = new Grupos(numGrupos, semilla);
 
         int totalHelicopteros = numCentros * numHelicopterosPorCentro;
         State estadoInicial = new State(totalHelicopteros);
-        InitialStateGenerator.generarSolucion(estadoInicial, 2);
 
-        System.out.println("Estado Inicial Generado con éxito.");
+        InitialStateGenerator.generarSolucion(estadoInicial, opcionGenerador);
 
+        System.out.println("\nEstado Inicial Generado con exito.");
         imprimirUbicacionesIniciales(estadoInicial);
 
-        ejecutarHillClimbing(estadoInicial);
-    }
-
-    private static void imprimirUbicacionesIniciales(State estado) {
-        System.out.println("\n--- Ubicación Inicial de Centros y Helicópteros ---");
-        int numCentros = State.todosLosCentros.size();
-        int totalHelicopteros = estado.getNumHelicopteros();
-        int helicosPorCentro = totalHelicopteros / numCentros;
-
-        for (int c = 0; c < numCentros; c++) {
-            // Obtenemos las coordenadas del centro
-            int x = State.todosLosCentros.get(c).getCoordX();
-            int y = State.todosLosCentros.get(c).getCoordY();
-
-            System.out.println("Centro " + c + " en Coordenadas (" + x + ", " + y + ")");
-            System.out.print("  -> Helicópteros estacionados aquí: [ ");
-
-            // Calculamos qué IDs de helicóptero le tocan a este centro
-            for (int h = 0; h < helicosPorCentro; h++) {
-                int idHelicoptero = (c * helicosPorCentro) + h;
-                System.out.print(idHelicoptero + " ");
-            }
-            System.out.println("]");
+        HeuristicFunction heuristica;
+        if (opcionHeuristica == 1) {
+            heuristica = new HeuristicFunction1();
+        } else {
+            heuristica = new HeuristicFunction2(1);
         }
-        System.out.println("---------------------------------------------------\n");
+        SuccessorFunction sucesores = null;
+
+        if (algoritmo.equals("HC")) {
+            switch (opcionOperador) {
+                case 1: sucesores = new SuccessorFunction1HC(); break;
+                case 2: sucesores = new SuccessorFunction2HC(); break;
+                case 3: sucesores = new SuccessorFunction3HC(); break;
+                default: System.out.println("Operador invalido."); return;
+            }
+            ejecutarHillClimbing(estadoInicial, sucesores, heuristica);
+
+        } else if (algoritmo.equals("SA")) {
+            switch (opcionOperador) {
+                case 1: sucesores = new SuccessorFunction1SA(); break;
+                case 2: sucesores = new SuccessorFunction2SA(); break;
+                case 3: sucesores = new SuccessorFunction3SA(); break;
+                default: System.out.println("Operador invalido."); return;
+            }
+            ejecutarSimulatedAnnealing(estadoInicial, sucesores, heuristica);
+
+        } else {
+            System.out.println("Algoritmo no reconocido. Usa HC o SA.");
+        }
     }
 
-    private static void ejecutarHillClimbing(State estadoInicial) {
-        System.out.println("Iniciando Hill Climbing...");
+    private static void ejecutarHillClimbing(State estadoInicial, SuccessorFunction sucesores, HeuristicFunction heuristica) {
+        System.out.println("\nIniciando Hill Climbing...");
         try {
-            Problem problem = new Problem(estadoInicial,
-                    new SuccessorFunction1HC(), // Puedes cambiarlo por el 2HC
-                    new RescueGoalTest(),
-                    new HeuristicFunction1());  // Puedes cambiarlo por la 2
-
+            Problem problem = new Problem(estadoInicial, sucesores, new RescueGoalTest(), heuristica);
             Search search = new HillClimbingSearch();
             SearchAgent agent = new SearchAgent(problem, search);
 
-            System.out.println("\n--- Resultado Final ---");
-            printActions(agent.getActions());
-            printInstrumentation(agent.getInstrumentation());
-
-            State estadoFinal = (State) search.getGoalState();
-
-            if (estadoFinal != null) {
-                HeuristicFunction1 heuristica = new HeuristicFunction1();
-                double tiempoFinal = heuristica.getHeuristicValue(estadoFinal);
-                System.out.println("Tiempo total final: " + tiempoFinal + " minutos");
-
-
-                imprimirAsignacionGrupos(estadoFinal);
-
-            } else {
-                System.out.println("El algoritmo no ha devuelto un estado final.");
-            }
-
+            imprimirResultados(agent, search, heuristica);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    private static void ejecutarSimulatedAnnealing(State estadoInicial, SuccessorFunction sucesores, HeuristicFunction heuristica) {
+        System.out.println("\nIniciando Simulated Annealing...");
+        try {
+            Scanner scanner = new Scanner(System.in);
+            Problem problem = new Problem(estadoInicial, sucesores, new RescueGoalTest(), heuristica);
+
+            System.out.print("Steps: ");
+            int steps = scanner.nextInt();
+
+            System.out.print("Steps/iter: ");
+            int stepsIter = scanner.nextInt();
+
+            System.out.print("K: ");
+            int k = scanner.nextInt();
+
+            System.out.print("Lambda: ");
+            int lambda = scanner.nextInt();
+
+            Search search = new SimulatedAnnealingSearch(steps, stepsIter, k, lambda);
+            SearchAgent agent = new SearchAgent(problem, search);
+
+            imprimirResultados(agent, search, heuristica);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void imprimirResultados(SearchAgent agent, Search search, HeuristicFunction heuristica) {
+        System.out.println("\nInstrumentacion: ");
+        printInstrumentation(agent.getInstrumentation());
+
+        State estadoFinal = (State) search.getGoalState();
+
+        if (estadoFinal != null) {
+            double tiempoFinal = heuristica.getHeuristicValue(estadoFinal);
+            System.out.println("\n>> TIEMPO TOTAL FINAL: " + tiempoFinal + " minutos <<");
+            imprimirAsignacionGrupos(estadoFinal);
+        } else {
+            System.out.println("El algoritmo no ha devuelto un estado final.");
         }
     }
 
@@ -101,14 +152,30 @@ public class Demo {
         }
     }
 
-    private static void printActions(java.util.List actions) {
-        for (Object action : actions) {
-            System.out.println(action.toString());
+    private static void imprimirUbicacionesIniciales(State estado) {
+        System.out.println("\nUbicacion Inicial de Centros y Helicopteros: ");
+        int numCentros = State.todosLosCentros.size();
+        int totalHelicopteros = estado.getNumHelicopteros();
+        int helicosPorCentro = totalHelicopteros / numCentros;
+
+        for (int c = 0; c < numCentros; c++) {
+            int x = State.todosLosCentros.get(c).getCoordX();
+            int y = State.todosLosCentros.get(c).getCoordY();
+
+            System.out.println("Centro " + c + " en Coordenadas (" + x + ", " + y + ")");
+            System.out.print("  -> Helicopteros estacionados aqui: [ ");
+
+            for (int h = 0; h < helicosPorCentro; h++) {
+                int idHelicoptero = (c * helicosPorCentro) + h;
+                System.out.print(idHelicoptero + " ");
+            }
+            System.out.println("]");
         }
+        System.out.println("---------------------------------------------------\n");
     }
 
     private static void imprimirAsignacionGrupos(State estado) {
-        System.out.println("\n--- Asignación de Grupos a Helicópteros ---");
+        System.out.println("\n--- Asignacion de Grupos a Helicopteros ---");
         int numGrupos = State.todosLosGrupos.size();
         int numHelicopteros = estado.getNumHelicopteros();
 
@@ -121,15 +188,15 @@ public class Demo {
         }
 
         for (int i = 0; i < numGrupos; i++) {
-            System.out.println("Grupo " + i + " -> Rescatado por Helicóptero " + asignacion[i]);
+            System.out.println("Grupo " + i + " -> Rescatado por Helicoptero " + asignacion[i]);
         }
 
-        System.out.println("\n--- Rutas completas por Helicóptero ---");
+        System.out.println("\n--- Rutas completas por Helicoptero ---");
         for (int h = 0; h < numHelicopteros; h++) {
             if (estado.getRuta(h).isEmpty()) {
-                System.out.println("Helicóptero " + h + ": (Sin asignar)");
+                System.out.println("Helicoptero " + h + ": (Sin asignar)");
             } else {
-                System.out.println("Helicóptero " + h + ": " + estado.getRuta(h));
+                System.out.println("Helicoptero " + h + ": " + estado.getRuta(h));
             }
         }
     }
