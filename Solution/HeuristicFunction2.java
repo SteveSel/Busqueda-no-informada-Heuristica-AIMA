@@ -5,7 +5,13 @@ import IA.Desastres.Centro;
 import IA.Desastres.Grupo;
 import java.util.ArrayList;
 
-public class HeuristicFunction1 implements HeuristicFunction {
+public class HeuristicFunction2 implements HeuristicFunction {
+
+    private double pesoPrioridad1;
+
+    public HeuristicFunction2(double pesoPrioridad1) {
+        this.pesoPrioridad1 = pesoPrioridad1;
+    }
 
     @Override
     public double getHeuristicValue(Object state) {
@@ -13,6 +19,7 @@ public class HeuristicFunction1 implements HeuristicFunction {
         ArrayList<ArrayList<ArrayList<Integer>>> plan = rescueState.getPlan();
 
         double tiempoTotalSuma = 0.0;
+        double maxTiempoLlegadaPrioridad1 = 0.0;
 
         for (int h = 0; h < plan.size(); h++) {
 
@@ -28,6 +35,7 @@ public class HeuristicFunction1 implements HeuristicFunction {
 
                 int actualX = centro.getCoordX();
                 int actualY = centro.getCoordY();
+                boolean llevaHeridos = false;
 
                 for (Integer idGrupo : viaje) {
                     Grupo grupo = RescueState.grupos.get(idGrupo);
@@ -38,12 +46,22 @@ public class HeuristicFunction1 implements HeuristicFunction {
                     int multiplicadorTiempo = (grupo.getPrioridad() == 1) ? 2 : 1;
                     tiempoRelojHelicoptero += grupo.getPersonas() * multiplicadorTiempo;
 
+                    if (grupo.getPrioridad() == 1) {
+                        llevaHeridos = true;
+                    }
+
                     actualX = grupo.getCoordX();
                     actualY = grupo.getCoordY();
                 }
 
                 double distRetorno = Math.hypot(actualX - centro.getCoordX(), actualY - centro.getCoordY());
                 tiempoRelojHelicoptero += (distRetorno / 100.0) * 60.0;
+
+                if (llevaHeridos) {
+                    if (tiempoRelojHelicoptero > maxTiempoLlegadaPrioridad1) {
+                        maxTiempoLlegadaPrioridad1 = tiempoRelojHelicoptero;
+                    }
+                }
 
                 if (v < viajes.size() - 1 && !viajes.get(v + 1).isEmpty()) {
                     tiempoRelojHelicoptero += 10.0;
@@ -53,6 +71,6 @@ public class HeuristicFunction1 implements HeuristicFunction {
             tiempoTotalSuma += tiempoRelojHelicoptero;
         }
 
-        return tiempoTotalSuma;
+        return tiempoTotalSuma + (pesoPrioridad1 * maxTiempoLlegadaPrioridad1);
     }
 }
