@@ -13,32 +13,27 @@ import java.util.Properties;
 
 public class Demo {
     public static void main(String[] args) {
-        // Parámetros del experimento 1 del PDF
         int numCentros = 5;
         int numHelicopterosPorCentro = 1;
         int semillaCentros = 1234;
         int numGrupos = 100;
         int semillaGrupos = 1234;
 
-        // 1. Inicializamos los datos estáticos del State
         State.todosLosCentros = new Centros(numCentros, numHelicopterosPorCentro, semillaCentros);
         State.todosLosGrupos = new Grupos(numGrupos, semillaGrupos);
 
-        // 2. Crear estado inicial
         int totalHelicopteros = numCentros * numHelicopterosPorCentro;
         State estadoInicial = new State(totalHelicopteros);
-        estadoInicial.generarSolucionInicial();
+        InitialStateGenerator.generarSolucion(estadoInicial, 2);
 
         System.out.println("Estado Inicial Generado con éxito.");
 
-        // 3. Ejecutar algoritmo
         ejecutarHillClimbing(estadoInicial);
     }
 
     private static void ejecutarHillClimbing(State estadoInicial) {
         System.out.println("Iniciando Hill Climbing...");
         try {
-            // Pasamos nuestra función de Sucesores, GoalTest y Heurística
             Problem problem = new Problem(estadoInicial,
                     new SuccessorFunction1HC(), // Puedes cambiarlo por el 2HC
                     new RescueGoalTest(),
@@ -57,6 +52,10 @@ public class Demo {
                 HeuristicFunction1 heuristica = new HeuristicFunction1();
                 double tiempoFinal = heuristica.getHeuristicValue(estadoFinal);
                 System.out.println("Tiempo total final: " + tiempoFinal + " minutos");
+
+
+                imprimirAsignacionGrupos(estadoFinal);
+
             } else {
                 System.out.println("El algoritmo no ha devuelto un estado final.");
             }
@@ -78,6 +77,33 @@ public class Demo {
     private static void printActions(java.util.List actions) {
         for (Object action : actions) {
             System.out.println(action.toString());
+        }
+    }
+
+    private static void imprimirAsignacionGrupos(State estado) {
+        System.out.println("\n--- Asignación de Grupos a Helicópteros ---");
+        int numGrupos = State.todosLosGrupos.size();
+        int numHelicopteros = estado.getNumHelicopteros();
+        
+        int[] asignacion = new int[numGrupos];
+
+        for (int h = 0; h < numHelicopteros; h++) {
+            for (int idGrupo : estado.getRuta(h)) {
+                asignacion[idGrupo] = h;
+            }
+        }
+
+        for (int i = 0; i < numGrupos; i++) {
+            System.out.println("Grupo " + i + " -> Rescatado por Helicóptero " + asignacion[i]);
+        }
+
+        System.out.println("\n--- Rutas completas por Helicóptero ---");
+        for (int h = 0; h < numHelicopteros; h++) {
+            if (estado.getRuta(h).isEmpty()) {
+                System.out.println("Helicóptero " + h + ": (Sin asignar)");
+            } else {
+                System.out.println("Helicóptero " + h + ": " + estado.getRuta(h));
+            }
         }
     }
 }
