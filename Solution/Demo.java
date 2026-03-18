@@ -12,6 +12,7 @@ import java.util.Iterator;
 import java.util.Properties;
 
 public class Demo {
+
     public static void main(String[] args) {
         int numCentros = 5;
         int numHelicopterosPorCentro = 1;
@@ -28,7 +29,33 @@ public class Demo {
 
         System.out.println("Estado Inicial Generado con éxito.");
 
+        imprimirUbicacionesIniciales(estadoInicial);
+
         ejecutarHillClimbing(estadoInicial);
+    }
+
+    private static void imprimirUbicacionesIniciales(State estado) {
+        System.out.println("\n--- Ubicación Inicial de Centros y Helicópteros ---");
+        int numCentros = State.todosLosCentros.size();
+        int totalHelicopteros = estado.getNumHelicopteros();
+        int helicosPorCentro = totalHelicopteros / numCentros;
+
+        for (int c = 0; c < numCentros; c++) {
+            // Obtenemos las coordenadas del centro
+            int x = State.todosLosCentros.get(c).getCoordX();
+            int y = State.todosLosCentros.get(c).getCoordY();
+
+            System.out.println("Centro " + c + " en Coordenadas (" + x + ", " + y + ")");
+            System.out.print("  -> Helicópteros estacionados aquí: [ ");
+
+            // Calculamos qué IDs de helicóptero le tocan a este centro
+            for (int h = 0; h < helicosPorCentro; h++) {
+                int idHelicoptero = (c * helicosPorCentro) + h;
+                System.out.print(idHelicoptero + " ");
+            }
+            System.out.println("]");
+        }
+        System.out.println("---------------------------------------------------\n");
     }
 
     private static void ejecutarHillClimbing(State estadoInicial) {
@@ -84,7 +111,7 @@ public class Demo {
         System.out.println("\n--- Asignación de Grupos a Helicópteros ---");
         int numGrupos = State.todosLosGrupos.size();
         int numHelicopteros = estado.getNumHelicopteros();
-        
+
         int[] asignacion = new int[numGrupos];
 
         for (int h = 0; h < numHelicopteros; h++) {
