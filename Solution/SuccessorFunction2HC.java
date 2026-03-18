@@ -4,7 +4,7 @@ import aima.search.framework.SuccessorFunction;
 import java.util.ArrayList;
 import java.util.List;
 
-/* Función para Hill Climbing que lo que hace swapear 2 grupos entre helicópteros */
+/* Función para Hill Climbing que swapea 2 grupos entre helicópteros */
 
 public class SuccessorFunction2HC implements SuccessorFunction {
     @Override
