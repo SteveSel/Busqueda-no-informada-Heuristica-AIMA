@@ -8,6 +8,7 @@ import java.util.Random;
 /* Función para Simulated Annealing: Mover aleatorio */
 
 public class SuccessorFunction1SA implements SuccessorFunction {
+    @Override
     public List getSuccessors(Object state) {
         ArrayList<Successor> sucesores = new ArrayList<>();
         State estadoActual = (State) state; // Casteamos igual que en HC
