@@ -7,6 +7,7 @@ import java.util.List;
 /* Función para Hill Climbing que lo que hace es mover un grupo de un helicóptero a otro */
 
 public class SuccessorFunction1HC implements SuccessorFunction {
+    @Override
     public List getSuccessors(Object state) {
         ArrayList<Successor> sucesores = new ArrayList<>();
 
