@@ -121,7 +121,7 @@ public class Demo {
             int k = scanner.nextInt();
 
             System.out.print("Lambda: ");
-            int lambda = scanner.nextInt();
+            float lambda = scanner.nextFloat();
             scanner.close();
 
             long tiempoInicio = System.currentTimeMillis();
