@@ -26,7 +26,6 @@ public class State {
     }
 
     public void generarSolucionInicial() {
-        // Asignación secuencial (Round Robin): Reparte equitativamente los grupos
         for (int i = 0; i < todosLosGrupos.size(); i++) {
             int helicopteroAsignado = i % numHelicopteros;
             rutasHelicopteros[helicopteroAsignado].add(i);

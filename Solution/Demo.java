@@ -92,9 +92,14 @@ public class Demo {
         System.out.println("\nIniciando Hill Climbing...");
         try {
             Problem problem = new Problem(estadoInicial, sucesores, new RescueGoalTest(), heuristica);
+            long tiempoInicio = System.currentTimeMillis();
             Search search = new HillClimbingSearch();
             SearchAgent agent = new SearchAgent(problem, search);
 
+
+            long tiempoFin = System.currentTimeMillis();
+            long tiempoTotal = tiempoFin - tiempoInicio;
+            System.out.println("\nTiempo: " + tiempoTotal + " ms (" + (tiempoTotal / 1000.0) + " s)");
             imprimirResultados(agent, search, heuristica);
         } catch (Exception e) {
             e.printStackTrace();
@@ -119,10 +124,16 @@ public class Demo {
             System.out.print("Lambda: ");
             int lambda = scanner.nextInt();
 
+            long tiempoInicio = System.currentTimeMillis();
+
             Search search = new SimulatedAnnealingSearch(steps, stepsIter, k, lambda);
             SearchAgent agent = new SearchAgent(problem, search);
 
+            long tiempoFin = System.currentTimeMillis();
+            long tiempoTotal = tiempoFin - tiempoInicio;
+            System.out.println("\nTiempo: " + tiempoTotal + " ms (" + (tiempoTotal / 1000.0) + " s)");
             imprimirResultados(agent, search, heuristica);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -136,8 +147,9 @@ public class Demo {
 
         if (estadoFinal != null) {
             double tiempoFinal = heuristica.getHeuristicValue(estadoFinal);
-            System.out.println("\n>> TIEMPO TOTAL FINAL: " + tiempoFinal + " minutos <<");
             imprimirAsignacionGrupos(estadoFinal);
+            System.out.println("\n>> TIEMPO TOTAL: " + tiempoFinal + " minutos <<");
+
         } else {
             System.out.println("El algoritmo no ha devuelto un estado final.");
         }
