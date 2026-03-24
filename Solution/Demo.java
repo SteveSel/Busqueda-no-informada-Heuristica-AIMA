@@ -44,8 +44,6 @@ public class Demo {
         System.out.print("Generador inicial (1 / 2 / 3): ");
         int opcionGenerador = scanner.nextInt();
 
-        scanner.close();
-
         State.todosLosCentros = new Centros(numCentros, numHelicopterosPorCentro, semilla);
         State.todosLosGrupos = new Grupos(numGrupos, semilla);
 
@@ -66,6 +64,7 @@ public class Demo {
         SuccessorFunction sucesores = null;
 
         if (algoritmo.equals("HC")) {
+            scanner.close();
             switch (opcionOperador) {
                 case 1: sucesores = new SuccessorFunction1HC(); break;
                 case 2: sucesores = new SuccessorFunction2HC(); break;
@@ -81,9 +80,10 @@ public class Demo {
                 case 3: sucesores = new SuccessorFunction3SA(); break;
                 default: System.out.println("Operador invalido."); return;
             }
-            ejecutarSimulatedAnnealing(estadoInicial, sucesores, heuristica);
+            ejecutarSimulatedAnnealing(estadoInicial, sucesores, heuristica, scanner);
 
         } else {
+            scanner.close();
             System.out.println("Algoritmo no reconocido. Usa HC o SA.");
         }
     }
@@ -106,10 +106,9 @@ public class Demo {
         }
     }
 
-    private static void ejecutarSimulatedAnnealing(State estadoInicial, SuccessorFunction sucesores, HeuristicFunction heuristica) {
+    private static void ejecutarSimulatedAnnealing(State estadoInicial, SuccessorFunction sucesores, HeuristicFunction heuristica, Scanner scanner) {
         System.out.println("\nIniciando Simulated Annealing...");
         try {
-            Scanner scanner = new Scanner(System.in);
             Problem problem = new Problem(estadoInicial, sucesores, new RescueGoalTest(), heuristica);
 
             System.out.print("Steps: ");
@@ -123,6 +122,7 @@ public class Demo {
 
             System.out.print("Lambda: ");
             int lambda = scanner.nextInt();
+            scanner.close();
 
             long tiempoInicio = System.currentTimeMillis();
 
