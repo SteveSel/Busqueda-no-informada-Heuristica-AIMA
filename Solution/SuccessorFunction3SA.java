@@ -7,6 +7,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
+/* Función para Simulated Annealing que invierte un subconjunto de la ruta de un helicóptero */
+
 public class SuccessorFunction3SA implements SuccessorFunction{
 
     @Override

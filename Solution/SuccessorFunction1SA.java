@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-/* Función para Simulated Annealing: Mover aleatorio */
+/* Función para Simulated Annealing que lo que hace es mover un grupo de un helicóptero a otro */
 
 public class SuccessorFunction1SA implements SuccessorFunction {
     @Override
