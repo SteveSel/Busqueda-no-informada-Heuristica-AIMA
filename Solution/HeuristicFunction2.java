@@ -5,14 +5,17 @@ import IA.Desastres.Centro;
 import IA.Desastres.Grupo;
 import java.util.ArrayList;
 
+// Heurística 2: Tiempo Total Logístico + Penalización por Urgencia Médica.
 public class HeuristicFunction2 implements HeuristicFunction {
 
     private double pesoPrioridad1;
 
+    // Constructor de la heurística.
     public HeuristicFunction2(double pesoPrioridad1) {
         this.pesoPrioridad1 = pesoPrioridad1;
     }
 
+    // Calcula el coste heurístico ponderado del estado actual.
     @Override
     public double getHeuristicValue(Object state) {
         State estado = (State) state;

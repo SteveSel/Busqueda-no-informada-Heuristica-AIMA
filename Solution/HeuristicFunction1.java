@@ -5,8 +5,10 @@ import IA.Desastres.Centro;
 import IA.Desastres.Grupo;
 import java.util.ArrayList;
 
+// Heurística 1: Minimización del tiempo total de la operación de rescate.
 public class HeuristicFunction1 implements HeuristicFunction {
 
+    // Calcula el coste heurístico (tiempo total) del estado actual.
     @Override
     public double getHeuristicValue(Object state) {
         State estado = (State) state;

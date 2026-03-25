@@ -88,6 +88,7 @@ public class Demo {
         }
     }
 
+    // Función auxiliar privada para ejecutar 1 caso limpio de Hill Climbing.
     private static void ejecutarHillClimbing(State estadoInicial, SuccessorFunction sucesores, HeuristicFunction heuristica) {
         System.out.println("\nIniciando Hill Climbing...");
         try {
@@ -101,6 +102,7 @@ public class Demo {
         }
     }
 
+    // Función auxiliar privada para ejecutar 1 caso limpio de Simulated Annealing.
     private static void ejecutarSimulatedAnnealing(State estadoInicial, SuccessorFunction sucesores, HeuristicFunction heuristica) {
         System.out.println("\nIniciando Simulated Annealing...");
         try {
@@ -128,6 +130,7 @@ public class Demo {
         }
     }
 
+    // Extrae e imprime por consola la información general sobre el final de la ejecución.
     private static void imprimirResultados(SearchAgent agent, Search search, HeuristicFunction heuristica) {
         System.out.println("\nInstrumentacion: ");
         printInstrumentation(agent.getInstrumentation());
@@ -143,6 +146,7 @@ public class Demo {
         }
     }
 
+    // Recorre la lista de propiedades de instrumentación devueltas por el framework AIMA
     private static void printInstrumentation(Properties properties) {
         Iterator keys = properties.keySet().iterator();
         while (keys.hasNext()) {
@@ -152,6 +156,7 @@ public class Demo {
         }
     }
 
+    // Muestra por pantalla la información estática inicial del escenario
     private static void imprimirUbicacionesIniciales(State estado) {
         System.out.println("\nUbicacion Inicial de Centros y Helicopteros: ");
         int numCentros = State.todosLosCentros.size();
@@ -174,6 +179,7 @@ public class Demo {
         System.out.println("---------------------------------------------------\n");
     }
 
+    // Traduce y formatea las listas de ID's almacenadas en el estado en información útil para el usuario
     private static void imprimirAsignacionGrupos(State estado) {
         System.out.println("\n--- Asignacion de Grupos a Helicopteros ---");
         int numGrupos = State.todosLosGrupos.size();
