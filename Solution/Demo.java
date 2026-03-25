@@ -16,6 +16,7 @@ import java.util.Properties;
 import java.util.Scanner;
 
 public class Demo {
+
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
@@ -40,8 +41,10 @@ public class Demo {
         System.out.print("Operador a usar (1: Mover, 2: Swap, 3: Invertir): ");
         int opcionOperador = scanner.nextInt();
 
-        System.out.print("Generador inicial (1: Secuencial, 2: Greedy, 3: Random): ");
+        System.out.print("Generador inicial (1 / 2 / 3): ");
         int opcionGenerador = scanner.nextInt();
+
+        scanner.close();
 
         State.todosLosCentros = new Centros(numCentros, numHelicopterosPorCentro, semilla);
         State.todosLosGrupos = new Grupos(numGrupos, semilla);
@@ -63,7 +66,6 @@ public class Demo {
         SuccessorFunction sucesores = null;
 
         if (algoritmo.equals("HC")) {
-            scanner.close();
             switch (opcionOperador) {
                 case 1: sucesores = new SuccessorFunction1HC(); break;
                 case 2: sucesores = new SuccessorFunction2HC(); break;
@@ -79,35 +81,32 @@ public class Demo {
                 case 3: sucesores = new SuccessorFunction3SA(); break;
                 default: System.out.println("Operador invalido."); return;
             }
-            ejecutarSimulatedAnnealing(estadoInicial, sucesores, heuristica, scanner);
+            ejecutarSimulatedAnnealing(estadoInicial, sucesores, heuristica);
 
         } else {
-            scanner.close();
             System.out.println("Algoritmo no reconocido. Usa HC o SA.");
         }
     }
 
+    // Función auxiliar privada para ejecutar 1 caso limpio de Hill Climbing.
     private static void ejecutarHillClimbing(State estadoInicial, SuccessorFunction sucesores, HeuristicFunction heuristica) {
         System.out.println("\nIniciando Hill Climbing...");
         try {
             Problem problem = new Problem(estadoInicial, sucesores, new RescueGoalTest(), heuristica);
-            long tiempoInicio = System.currentTimeMillis();
             Search search = new HillClimbingSearch();
             SearchAgent agent = new SearchAgent(problem, search);
 
-
-            long tiempoFin = System.currentTimeMillis();
-            long tiempoTotal = tiempoFin - tiempoInicio;
-            System.out.println("\nTiempo: " + tiempoTotal + " ms (" + (tiempoTotal / 1000.0) + " s)");
             imprimirResultados(agent, search, heuristica);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private static void ejecutarSimulatedAnnealing(State estadoInicial, SuccessorFunction sucesores, HeuristicFunction heuristica, Scanner scanner) {
+    // Función auxiliar privada para ejecutar 1 caso limpio de Simulated Annealing.
+    private static void ejecutarSimulatedAnnealing(State estadoInicial, SuccessorFunction sucesores, HeuristicFunction heuristica) {
         System.out.println("\nIniciando Simulated Annealing...");
         try {
+            Scanner scanner = new Scanner(System.in);
             Problem problem = new Problem(estadoInicial, sucesores, new RescueGoalTest(), heuristica);
 
             System.out.print("Steps: ");
@@ -120,24 +119,18 @@ public class Demo {
             int k = scanner.nextInt();
 
             System.out.print("Lambda: ");
-            float lambda = scanner.nextFloat();
-            scanner.close();
-
-            long tiempoInicio = System.currentTimeMillis();
+            int lambda = scanner.nextInt();
 
             Search search = new SimulatedAnnealingSearch(steps, stepsIter, k, lambda);
             SearchAgent agent = new SearchAgent(problem, search);
 
-            long tiempoFin = System.currentTimeMillis();
-            long tiempoTotal = tiempoFin - tiempoInicio;
-            System.out.println("\nTiempo: " + tiempoTotal + " ms (" + (tiempoTotal / 1000.0) + " s)");
             imprimirResultados(agent, search, heuristica);
-
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    // Extrae e imprime por consola la información general sobre el final de la ejecución.
     private static void imprimirResultados(SearchAgent agent, Search search, HeuristicFunction heuristica) {
         System.out.println("\nInstrumentacion: ");
         printInstrumentation(agent.getInstrumentation());
@@ -146,14 +139,14 @@ public class Demo {
 
         if (estadoFinal != null) {
             double tiempoFinal = heuristica.getHeuristicValue(estadoFinal);
+            System.out.println("\n>> TIEMPO TOTAL FINAL: " + tiempoFinal + " minutos <<");
             imprimirAsignacionGrupos(estadoFinal);
-            System.out.println("\n>> TIEMPO TOTAL: " + tiempoFinal + " minutos <<");
-
         } else {
             System.out.println("El algoritmo no ha devuelto un estado final.");
         }
     }
 
+    // Recorre la lista de propiedades de instrumentación devueltas por el framework AIMA
     private static void printInstrumentation(Properties properties) {
         Iterator keys = properties.keySet().iterator();
         while (keys.hasNext()) {
@@ -163,6 +156,7 @@ public class Demo {
         }
     }
 
+    // Muestra por pantalla la información estática inicial del escenario
     private static void imprimirUbicacionesIniciales(State estado) {
         System.out.println("\nUbicacion Inicial de Centros y Helicopteros: ");
         int numCentros = State.todosLosCentros.size();
@@ -185,6 +179,7 @@ public class Demo {
         System.out.println("---------------------------------------------------\n");
     }
 
+    // Traduce y formatea las listas de ID's almacenadas en el estado en información útil para el usuario
     private static void imprimirAsignacionGrupos(State estado) {
         System.out.println("\n--- Asignacion de Grupos a Helicopteros ---");
         int numGrupos = State.todosLosGrupos.size();
