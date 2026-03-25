@@ -16,7 +16,6 @@ import java.util.Properties;
 import java.util.Scanner;
 
 public class Demo {
-
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
@@ -41,7 +40,7 @@ public class Demo {
         System.out.print("Operador a usar (1: Mover, 2: Swap, 3: Invertir): ");
         int opcionOperador = scanner.nextInt();
 
-        System.out.print("Generador inicial (1 / 2 / 3): ");
+        System.out.print("Generador inicial (1: Secuencial, 2: Greedy, 3: Random): ");
         int opcionGenerador = scanner.nextInt();
 
         State.todosLosCentros = new Centros(numCentros, numHelicopterosPorCentro, semilla);

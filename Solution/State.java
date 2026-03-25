@@ -25,13 +25,6 @@ public class State {
         }
     }
 
-    public void generarSolucionInicial() {
-        for (int i = 0; i < todosLosGrupos.size(); i++) {
-            int helicopteroAsignado = i % numHelicopteros;
-            rutasHelicopteros[helicopteroAsignado].add(i);
-        }
-    }
-
     public ArrayList<Integer> getRuta(int idHelicoptero) {
         return rutasHelicopteros[idHelicoptero];
     }
